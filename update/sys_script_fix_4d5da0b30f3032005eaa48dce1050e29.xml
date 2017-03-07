@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_fix">
+    <sys_script_fix action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <before>false</before>
+        <description/>
+        <flush_cache>false</flush_cache>
+        <name>Show GlideAttachment Methods</name>
+        <run_once>true</run_once>
+        <script><![CDATA[for (var methods in new GlideSysAttachment()) {
+    gs.log(methods);
+}
+]]></script>
+        <sys_class_name>sys_script_fix</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-14 07:45:49</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>4d5da0b30f3032005eaa48dce1050e29</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Show GlideAttachment Methods</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sys_script_fix_4d5da0b30f3032005eaa48dce1050e29</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-02-14 07:45:49</sys_updated_on>
+        <unloadable>true</unloadable>
+    </sys_script_fix>
+</record_update>

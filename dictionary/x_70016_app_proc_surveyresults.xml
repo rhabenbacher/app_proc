@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="SurveyResults" max_length="40" name="x_70016_app_proc_surveyresults" type="collection">
+        <element label="Hierarchy1" max_length="60" name="hierarchy1" type="string"/>
+        <element label="hierarchy1order" max_length="20" name="hierarchy1order" type="string"/>
+        <element label="Hierarchy2" max_length="60" name="hierarchy2" type="string"/>
+        <element label="Hierarchy3" max_length="60" name="hierarchy3" type="string"/>
+        <element label="Hierarchy4" max_length="60" name="hierarchy4" type="string"/>
+        <element label="Hierarchy5" max_length="60" name="hierarchy5" type="string"/>
+        <element label="Processid" max_length="40" name="processid" type="string"/>
+        <element label="Processname" max_length="80" name="processname" type="string"/>
+        <element display="true" label="processorder" max_length="20" name="processorder" type="string"/>
+        <element label="Questionid" max_length="20" name="questionid" type="decimal"/>
+        <element choice="1" label="Questiontype" max_length="40" name="questiontype" type="choice">
+            <choice>
+                <element label="-- New choice --" value="-- New choice --"/>
+                <element label="decimal" value="decimal"/>
+                <element label="text" value="text"/>
+            </choice>
+        </element>
+        <element label="Resultdecimal" max_length="20" name="resultdecimal" type="decimal"/>
+        <element label="Resulttext" max_length="1000" name="resulttext" type="string"/>
+        <element label="Surveyid" max_length="40" name="surveyid" type="string"/>
+        <element label="Username" max_length="40" name="username" type="string"/>
+    </element>
+</database>

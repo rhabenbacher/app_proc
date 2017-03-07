@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function mainCtrl($scope, $rootScope, $http, $q, $mdDialog, $location, $window, $timeout, processData) {
+   var vm = this;
+   vm.progressShow = true;
+   vm.headline = "Feedback Processes&Apps";
+
+   // get the current ServiceNow User
+   processData.setLogin((typeof g_user !== 'undefined') ? g_user.userName : 'admin');
+   console.log("Login: "+processData.getLogin());
+
+
+  function loadData() {
+    processData.loadMessages().then(function(messages) {
+       vm.messages = messages;
+    },function(error){
+      if (error.status == 401) {
+        vm.authError = true;
+      }
+    });
+   processData.readSurveyStatsHier1().then(function(data) {
+      vm.values = data;
+      vm.progressShow = false;
+   },function(error){
+      vm.progressShow = false;
+      vm.authError = true;
+   });
+
+ }
+
+   loadData();
+   $rootScope.$on('newSurvey',loadData);
+   $rootScope.$on('NewFeedMessage', loadData);
+
+   vm.getColor = function(val) {
+      return getColor(val);
+   };
+
+   vm.showDetail = function(line) {
+      var modalData = {
+         title: line.hierarchy1 + " Feedback",
+         name: line.hierarchy1,
+         navList: [],
+         statsHier1: line
+
+      };
+
+         $mdDialog.show({
+            controller: DialogController,
+            templateUrl: 'apdetail.html',
+            parent: angular.element(document.body),
+            //      targetEvent: ev,
+            clickOutsideToClose: true,
+            locals: {
+               modalData: modalData
+            },
+         });
+
+   };
+
+   vm.postFeedback = function() {
+      $mdDialog.show({
+         controller: processSelectCtrl,
+         templateUrl: 'apselectprocess.html',
+         parent: angular.element(document.body),
+         //      targetEvent: ev,
+         clickOutsideToClose: false,
+         //      locals: { modalData: modalData },
+      });
+   };
+
+
+   vm.addMessage = function(group) {
+      var modalData = {};
+      modalData.messages = vm.messages.items.filter(function(m) {
+         return m.group.value === group.value;
+      });
+      modalData.title = group.display_value;
+      modalData.group = group;
+
+      $mdDialog.show({
+         controller: addMsgCtrl,
+         templateUrl: 'apaddmessage.html',
+         parent: angular.element(document.body),
+         //      targetEvent: ev,
+         clickOutsideToClose: true,
+         locals: {
+            modalData: modalData
+         },
+      });
+   };
+
+   vm.loadMore = function() {
+     vm.loading = true;
+     processData.loadMessages(vm.messages.nextUrl).then(function(messages) {
+        Array.prototype.push.apply(vm.messages.items,messages.items);
+        if (messages.nextUrl) {
+          vm.messages.nextUrl = messages.nextUrl;
+        }
+        else {
+          delete vm.messages.nextUrl;
+        }
+        vm.loading = false;
+     },function(error){
+         vm.loading = false;
+     });
+
+   };
+
+
+}
+
+function getDetails(level1, level2, details) {
+   var subStr = level1 + "/" + level2;
+   return details.filter(function(item) {
+      return item.name.startsWith(subStr);
+   });
+}
+
+function getColor(val) {
+   var color = "grey-700";
+   switch (Math.floor(val)) {
+      case 0:
+         color = 'grey-700';
+         break;
+      case 1:
+         color = 'orange-700';
+         break;
+      case 2:
+         color = 'amber-700';
+         break;
+      case 3:
+      case 4:
+         color = 'lightGreen-700';
+         break;
+   }
+   return color;
+}
+
+
+
+function DialogController($scope, $mdDialog, modalData, $window, processData, $mdToast,$anchorScroll,$location) {
+
+   function layoutAdapt() {
+      $scope.layout = {
+         isWindowSmall: (document.documentElement.clientWidth < 600),
+         showNav: true,
+         showNavButton: false
+      };
+      $scope.layout.showCards = ($scope.layout.isWindowSmall) ? false : true;
+   }
+
+   function loadData(hier1,hier2){
+     $scope.progressShow = true;
+     $scope.detailSummary = [];
+     $scope.detailList = [];
+     processData.readSurveyStatsHier1(hier1, hier2)
+     .then(function(data){
+       $scope.detailSummary = data;
+       return processData.readSurveysHier12(hier1, hier2);
+     })
+     .then(function(data) {
+        $scope.detailList = data;
+        $scope.progressShow = false;
+
+        $location.hash('topNav');
+        $anchorScroll();
+     });
+
+   }
+
+   //  Controller initialization
+   layoutAdapt();
+   $window.addEventListener("resize", layoutAdapt);
+
+   $scope.title = modalData.title;
+   $scope.detailList = [];
+   $scope.progressShow = true;
+   $scope.nav = {
+      checkedIndex: 999,
+      checkedIcon: 'data:image/svg+xml,<svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>',
+      buttonIcon: 'data:image/svg+xml,<svg fill="#FFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>'
+   };
+
+   processData.loadHier2(modalData.name)
+      .then(function(data) {
+         $scope.nav.items = data;
+         $scope.progressShow = false;
+         if ($scope.nav.items.length > 0  && !$scope.layout.isWindowSmall) {
+           $scope.nav.checkedIndex = 0;
+           loadData(modalData.name, $scope.nav.items[0].name);
+         }
+      }, function(error) {
+         $scope.progressShow = false;
+         nwError(error);
+      });
+
+
+   $scope.hide = function() {
+      $mdDialog.hide();
+   };
+   $scope.cancel = function() {
+      $mdDialog.cancel();
+   };
+
+   $scope.navigate = function(navItem, ind) {
+      $scope.nav.checkedIndex = ind;
+      loadData(modalData.name, navItem.name);
+      if ($scope.layout.isWindowSmall) {
+         $scope.layout.showNav = false;
+         $scope.layout.showCards = true;
+         $scope.layout.showNavButton = true;
+      }
+
+   };
+
+   $scope.doShowNav = function() {
+      $scope.layout.showNav = true;
+      $scope.layout.showCards = false;
+      $scope.layout.showNavButton = false;
+   };
+
+   $scope.getColor = function(value) {
+      return getColor(value);
+   };
+
+}
+
+
+function processSelectCtrl($scope, $http, $q, $mdDialog, $location, $window, $timeout, $mdToast, processData) {
+
+   var c = $scope;
+   var deferred = $q.defer();
+
+   c.progressShow = false;
+   c.selectedTabIndex = 0;
+
+   processData.loadProcesses().then(function(data) {
+      c.processlist = data.processes;
+      c.toplevel = data.toplevel;
+      deferred.resolve(c.processlist);
+   }, nwError);
+
+
+   c.getProcesses = function(query) {
+      if (c.processlist === undefined) {
+         return deferred.promise;
+      }
+
+      return query ? c.processlist.filter(createFilterFor(query)) : c.processlist;
+
+   };
+
+   c.getFilteredProcessList = function(topLevelName) {
+      var filtered = c.processlist.filter(function(value) {
+         return (value.topLevelName == topLevelName);
+      });
+      return filtered;
+   };
+
+
+   c.loadImage2 = function(obj) {
+      if (!obj) {
+         return;
+      }
+      c.progressShow = true;
+      c.image = {
+         title: obj.name,
+         style: {
+            'width': '100%',
+            'height': 'auto'
+         }
+      };
+
+      processData.loadProcessImg(obj.sys_id)
+         .then(function(res) {
+            c.progressShow = false;
+            console.log(res);
+            if (res.noDiagramAvailable) {
+               var confirmDialog = $mdDialog.confirm()
+                  .title('Would you like to continue?')
+                  .textContent('No Process Diagram available')
+                  .ariaLabel('No Diagram Available')
+                  .ok('Continue')
+                  .cancel('Cancel');
+               return $mdDialog.show(confirmDialog);
+
+            } else {
+               for (var prop in res) {
+                  c.image[prop] = res[prop];
+               }
+
+               return $mdDialog.show({
+                  templateUrl: 'apshowprocess.html',
+                  parent: angular.element(document.body),
+                  fullscreen: true,
+                  controller: showProcessController,
+                  locals: {
+                     image: c.image
+                  }
+               });
+            }
+
+         })
+         .then(function(answer) {
+            c.selectedProcess = undefined;
+            c.searchText = "";
+            //$window.location.href = '/process_feedback/#?hierarchy1=' + encodeURIComponent(obj.hierarchy1) + '&hierarchy2=' + encodeURIComponent(obj.hierarchy2) + '&processname=' + encodeURIComponent(obj.processname);
+            //?hierarchy1=hier1&hierarchy2=hier2&processname=processname
+            console.log(obj);
+
+
+            $mdDialog.show({
+               controller: surveyController,
+               templateUrl: 'apsurvey.html',
+               parent: angular.element(document.body),
+               clickOutsideToClose: true,
+               locals: {
+                  params: getParams(obj)
+               },
+            });
+            $scope.cancel();
+
+         }, function() {
+            console.log('cancelled!!');
+            //c.selectedProcess = undefined;
+            // c.searchText = '';
+            // $window.location.reload();
+            // c.status = 'You cancelled the dialog.';
+            $scope.cancel();
+
+         });
+   };
+
+   $scope.hide = function() {
+      $mdDialog.hide();
+   };
+   $scope.cancel = function() {
+      $mdDialog.cancel();
+   };
+
+
+}
+
+
+function getParams(obj) {
+   var params = {
+      id: obj.id,
+      name: obj.name,
+      display: obj.display,
+      hierarchy: JSON.parse(obj.hierarchies),
+      order: obj.order
+   };
+
+   return params;
+}
+
+
+function showProcessController($scope, $mdDialog, image) {
+   console.log('DialogController');
+   $scope.image = image;
+   console.log($scope.image);
+   $scope.factor150 = '150%';
+   $scope.factor125 = '125%';
+   $scope.factor100 = '100%';
+   $scope.hide = function() {
+      $mdDialog.hide();
+   };
+   $scope.cancel = function() {
+      $mdDialog.cancel();
+   };
+   $scope.nextStep = function() {
+      $mdDialog.hide();
+   };
+  //  $scope.imageLoaded = function() {
+  //     console.log('image loaded');
+  //     $scope.loaded27 = true;
+  //  };
+   $scope.zoom = function(factor) {
+      $scope.image.style.width = factor;
+   };
+}
+
+function surveyController($scope, $rootScope, $mdDialog, params, $anchorScroll, $location, processData, $q,$timeout) {
+
+   var surveyId = "ProcessSurvey01";
+   $scope.survey = [];
+   $scope.saving = {
+      progress: 0
+   };
+   $scope.initializing = true;
+   $scope.title = params.display;
+   $scope.processName = params.name;
+   $scope.survey = processData.getSurveyQuestions();
+
+   processData.loadSurvey(surveyId, params.id, processData.getLogin()).then(function(res) {
+      $scope.initializing = false;
+      $scope.loadMessage = res.loadMessage;
+      res.survey.forEach(function(item) {
+         $scope.survey[item.questionid].result = item.result;
+         $scope.survey[item.questionid].resulttext = item.resulttext;
+         $scope.survey[item.questionid].sys_id = item.sys_id;
+      });
+      $location.hash('titleElement');
+      $anchorScroll();
+   });
+
+
+   $scope.submitSurvey = function() {
+      var promises = [];
+      surveySaving(1);
+      $scope.survey.forEach(function(question, index) {
+         console.log('result' + index + ':' + question.result);
+         //promises.push(postSurveyQuestion(index,question));
+         promises.push(processData.postSurveyItem({
+            surveyId: surveyId,
+            processId: params.id,
+            questionId: index,
+            userName: processData.getLogin(),
+            processName: params.name,
+            hierarchy: params.hierarchy,
+            order: params.order
+         }, question));
+      });
+      $q.all(promises).then(function(success) {
+         surveySaving(2);
+         console.log('all posts successfull saved!');
+         processData.postMessageSurveyDone(params.hierarchy,params.name,$scope.survey).then(function(data){
+           $rootScope.$broadcast('newSurvey');
+         });
+      }, function(error) {
+         surveySaving(3);
+         console.log('error in at least one post!');
+      });
+   };
+
+   $scope.cancel = function() {
+
+      $mdDialog.cancel();
+   };
+
+   function surveySaving(progress) {
+      var savingText = ["", "Saving Survey ....", "Survey saved!", "Error saving Survey"];
+      $scope.saving.progress = progress;
+      $scope.saving.text = savingText[progress];
+   }
+}
+
+function createFilterFor(query) {
+   var lowercaseQuery = angular.lowercase(query);
+   return function filterFn(process) {
+      return (process.search.indexOf(lowercaseQuery) >= 0);
+   };
+}
+
+function nwError() {
+   $mdToast.show(
+      $mdToast.simple()
+      .textContent('Network Error')
+      .position('top right')
+      .hideDelay(2000)
+   );
+}
+
+function addMsgCtrl($scope, $rootScope,$mdDialog, modalData, processData) {
+
+   $scope.title = modalData.title;
+   $scope.messages = modalData.messages;
+   $scope.newMessage = {};
+   $scope.addMessage = function() {
+      var feedMessage = {
+         message: $scope.newMessage.msgtext,
+         group: modalData.group.value
+      };
+
+      processData.postMessage(feedMessage).then(function(success) {
+         $rootScope.$broadcast('NewFeedMessage');
+         $scope.newMessage = {};
+         $mdDialog.cancel();
+      });
+   };
+
+   $scope.hide = function() {
+      $mdDialog.hide();
+   };
+   $scope.cancel = function() {
+      $mdDialog.cancel();
+   };
+
+}
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>Widget for process surveys</description>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>app-proc-all</id>
+        <internal>false</internal>
+        <link/>
+        <name>app_proc_all</name>
+        <option_schema/>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	
+
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-28 17:25:51</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>1ef7fed00f1d32005eaa48dce1050eb1</sys_id>
+        <sys_mod_count>19</sys_mod_count>
+        <sys_name>app_proc_all</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_widget_1ef7fed00f1d32005eaa48dce1050eb1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-03-06 15:24:00</sys_updated_on>
+        <template><![CDATA[<div>
+<!-- your widget template -->
+<md-content >
+
+   <!-- Standard View width >= 960 PX -->
+    <div layout="row" hide-xs hide-sm>
+      <section flex layout="column" class="pl1 pr05 pv1">
+        <ap-messages fscope="c" small="false"></ap-messages>
+      </section>
+
+      <section flex layout="column" class="maxw600">
+        <ap-process-info fscope="c" small="false"></ap-process-info>
+      </section>
+    </div>
+
+     <!-- Tabbed View width < 960 PX -->
+    <div hide-gt-sm>
+      <md-tabs class="md-primary" md-border-bottom>
+        <md-tab label="News">
+          <section layout="column" class="md-padding">
+              <ap-messages fscope="c" small="true"></ap-messages>
+          </section>
+        </md-tab>
+        <md-tab label="KPIs">
+            <ap-process-info fscope="c" small="true"></ap-process-info>
+        </md-tab>
+      </md-tabs>
+    </div>
+
+  </md-content>  
+   
+
+
+</div>]]></template>
+    </sp_widget>
+</record_update>

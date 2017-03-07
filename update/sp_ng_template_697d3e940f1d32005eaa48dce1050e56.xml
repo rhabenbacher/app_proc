@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>apselectprocess.html</id>
+        <sp_widget display_value="app_proc_all">1ef7fed00f1d32005eaa48dce1050eb1</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-28 17:48:06</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>697d3e940f1d32005eaa48dce1050e56</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>apselectprocess.html</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_ng_template_697d3e940f1d32005eaa48dce1050e56</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-03-01 09:46:42</sys_updated_on>
+        <template><![CDATA[<md-dialog class="modSize">
+    <ap-modal-title-toolbar toolbar-cls="md-primary" icon-cls="cwhite" title="'Select a Process'" click-evt="cancel()">
+    </ap-modal-title-toolbar>
+    <md-dialog-content class="md-padding" layout="column">
+        <section flex>
+            <md-autocomplete md-selected-item-change="loadImage2(selectedProcess)" md-selected-item="selectedProcess" md-search-text="searchText" md-items="item in getProcesses(searchText)" md-item-text="item.display" md-min-length="0" md-select-on-match="true"
+                md-autoselect="true" placeholder="click or write">
+                <md-item-template>
+                    <span md-highlight-text="searchText" md-highlight-flags="i">{{item.display}}</span>
+                </md-item-template>
+                <md-not-found>
+                    No processes matching "{{searchText}}" could be found.
+                </md-not-found>
+            </md-autocomplete>
+        </section>
+        <section layout="row" layout-sm="column" layout-align="space-around" ng-hide="!progressShow">
+            <md-progress-circular ng-if="progressShow" md-mode="indeterminate" class="md-primary"></md-progress-circular>
+        </section>
+        <section flex class="pt3">
+            <md-tabs md-selected="selectedTabIndex" md-border-bottom class="processSelTabs">
+                <md-tab ng-repeat="tab in toplevel track by $index" label="{{tab.display}}">
+                    <md-content>
+                        <md-list ng-repeat="item in getFilteredProcessList(tab.name)">
+                            <md-list-item layout="row" layout-align="start start" ng-click="loadImage2(item)">
+                                <p flex-gt-sm="10" flex-gt-xs="15" flex="25" class="fs16">{{item.order}}</p>
+                                <p flex-gt-sm="90" flex-gt-xs="85" flex="75" class="fs16">{{item.display2}}</p>
+                            </md-list-item>
+                        </md-list>
+                    </md-content>
+                </md-tab>
+
+            </md-tabs>
+        </section>
+    </md-dialog-content>
+
+</md-dialog>
+]]></template>
+    </sp_ng_template>
+</record_update>

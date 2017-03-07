@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>addmessage.html</id>
+        <sp_widget display_value="app_proc_msg_list">87731c0c0f1132005eaa48dce1050e0e</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-27 10:49:44</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>a324144c0f1132005eaa48dce1050ede</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>addmessage.html</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_ng_template_a324144c0f1132005eaa48dce1050ede</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-02-27 15:01:46</sys_updated_on>
+        <template><![CDATA[<md-dialog aria-label="new Message" class="modSize">
+
+    <md-toolbar class="darkgrey bgwhitesmoke">
+      <div class="md-toolbar-tools">
+        <h2>Community {{title}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon class="darkgreyfill" md-svg-src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICAgPHBhdGggZD0iTTE5IDYuNDFMMTcuNTkgNSAxMiAxMC41OSA2LjQxIDUgNSA2LjQxIDEwLjU5IDEyIDUgMTcuNTkgNi40MSAxOSAxMiAxMy40MSAxNy41OSAxOSAxOSAxNy41OSAxMy40MSAxMnoiLz4gICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <form name="modalForm">
+      <div layout="row" class="flexitemsend">
+        <div flex="80" class="pt10 pl10">
+        <md-input-container class="md-block">
+          <label>Message</label>
+          <textarea name="msgtext" ng-model="newMessage.msgtext" rows="1" minlength="3" required md-select-on-focus></textarea>
+          <div ng-messages="modalForm.msgtext.$error" role="alert">
+            <div ng-message="minlength">a message has at least 3 chars...</div>
+            <div ng-message="required">some text is required...</div>
+          </div>
+        </md-input-container>
+      </div>
+      <div flex>
+        <md-button id="addBtn" type ="submit" class="md-button" aria-label="plus" ng-click = "modalForm.$valid && addMessage()">
+          <md-icon class="wh30 lightblue"md-svg-src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPiAgICA8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptNSAxMWgtNHY0aC0ydi00SDd2LTJoNFY3aDJ2NGg0djJ6Ii8+PC9zdmc+"></md-icon>
+       </md-button>
+        </div>
+      </div>
+
+      <div layout="row">
+        <md-list>
+          <md-list-item class="md-list-item m05" ng-repeat = "m in messages" ng-class-odd="'bgclg'">
+            <div class="md-list-item-text pa05" >
+              <p class="md-caption">{{m.sys_created_by.display_value}}@{{m.sys_created_on.display_value}}</p>
+              <p class="md-body-1 mr05" style="white-space:pre-line;">{{m.message.display_value}}</p>
+            </div>
+          </md-list-item>
+
+        </md-list>
+
+      </div>
+    </form>
+      </md-dialog-content>
+
+
+</md-dialog>
+]]></template>
+    </sp_ng_template>
+</record_update>

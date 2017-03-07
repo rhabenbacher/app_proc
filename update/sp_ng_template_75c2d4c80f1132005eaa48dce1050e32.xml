@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>surveyquestion.html</id>
+        <sp_widget display_value="app_proc_info">c16c161a0f4932005eaa48dce1050e23</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-27 10:43:26</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>75c2d4c80f1132005eaa48dce1050e32</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>surveyquestion.html</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_ng_template_75c2d4c80f1132005eaa48dce1050e32</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-02-27 15:56:42</sys_updated_on>
+        <template><![CDATA[<div flex layout="row" layout-wrap layout-align="start start" ng-if="question.type=='decimal'" class="mb2">
+    <div flex-gt-md="40" flex="100">
+        <h4>{{question.question}}</h4>
+    </div>
+    <div flex-gt-md="60" flex="100" class="mt1">
+        <section layout-gt-xs="row" layout="column" layout-align="center center" layout-wrap>
+            <button class="APbuttonGroup" ng-repeat="option in question.options track by $index" ng-click="question.result=$index" ng-class="{'APbuttonChecked':(question.result===$index)}">{{option.text}}</button>
+        </section>
+    </div>
+</div>
+
+<div layout="column" ng-if="question.type=='text'">
+  <div flex>
+      <h4>{{question.question}}</h4>
+  </div>
+  <div flex>
+     <md-input-container class="md-block">
+       <textarea ng-model="question.resulttext" md-select-on-focus></textarea>
+    </md-input-container>
+  </div>
+</div>
+]]></template>
+    </sp_ng_template>
+</record_update>

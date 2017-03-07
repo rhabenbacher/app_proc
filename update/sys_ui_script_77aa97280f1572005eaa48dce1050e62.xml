@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>centralize environment dependent constants  </description>
+        <global>false</global>
+        <name>x_70016_app_proc.constantService</name>
+        <script><![CDATA[angular.module('ap.constantService',[])
+.constant('urlProcesses', '/api/now/table/x_70016_app_proc_processes?sysparm_query=ORDERBYorder')
+.constant('urlImg', '/api/now/attachment?sysparm_limit=1')
+.constant('urlSurvey', '/api/now/table/x_70016_app_proc_surveyresults')
+.constant('urlMessages',  '/api/now/table/live_message')
+.constant('urlSurveyStats',  '/api/now/stats/x_70016_app_proc_surveyresults')
+.constant('urlLiveGroup', '/api/now/table/live_group_profile')
+.factory('constantService', constantService);
+
+function constantService(){
+
+  function getConfigHttp() {
+    return {};
+  }
+  return {getConfigHttp:getConfigHttp};
+  }
+]]></script>
+        <script_name>constantService</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-03-01 14:40:24</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>77aa97280f1572005eaa48dce1050e62</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>x_70016_app_proc.constantService</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sys_ui_script_77aa97280f1572005eaa48dce1050e62</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-03-01 14:44:29</sys_updated_on>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

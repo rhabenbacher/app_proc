@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_70016_app_proc.processData</name>
+        <script><![CDATA[angular.module('ap.processData', ['ngMaterial','ap.constantService'])
+
+.config(function($mdThemingProvider) {
+
+  $mdThemingProvider.theme('default')
+    .primaryPalette('blue', {
+      'default': '600', // by default use shade 400 from the pink palette for primary intentions
+      'hue-1': '100', // use shade 100 for the <code>md-hue-1</code> class
+      'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
+      'hue-3': 'A100' // use shade A100 for the <code>md-hue-3</code> class
+    })
+    // If you specify less than all of the keys, it will inherit from the
+    // default shades
+    .accentPalette('purple', {
+      'default': '200' // use shade 200 for default, and keep all other shades the same
+    });
+
+})
+
+.directive('apSurveyQuestion', function() {
+   return {
+      restrict: 'E',
+      scope: {
+         question: '='
+      },
+      templateUrl: 'apsurveyquestion.html'
+   };
+})
+
+.directive('apModalTitleToolbar', function() {
+   return {
+      restrict: 'E',
+      scope: {
+         toolbarCls: '@',
+         iconCls: '@',
+         title: '<',
+         clickEvt: '&'
+      },
+      template: '<md-toolbar class="{{toolbarCls}}">' +
+         '<div class="md-toolbar-tools">' +
+         '<h2>{{title}}</h2>' +
+         '<span flex></span>' +
+         '<md-button class="md-icon-button" ng-click="clickEvt()">' +
+         '<md-icon class="{{iconCls}}" md-svg-src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICAgPHBhdGggZD0iTTE5IDYuNDFMMTcuNTkgNSAxMiAxMC41OSA2LjQxIDUgNSA2LjQxIDEwLjU5IDEyIDUgMTcuNTkgNi40MSAxOSAxMiAxMy40MSAxNy41OSAxOSAxOSAxNy41OSAxMy40MSAxMnoiLz4gICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==" aria-label="Close dialog"></md-icon>' +
+         '</md-button>' +
+         '</div>' +
+         '</md-toolbar>'
+   };
+})
+
+.directive('apMessages', function() {
+   return {
+      restrict: 'E',
+      scope: {
+          c: '=fscope',
+          small:'='
+      },
+      templateUrl: 'apmessages.html'
+   };
+})
+.directive('apProcessInfo', function() {
+   return {
+      restrict: 'E',
+      scope: {
+          c: '=fscope',
+          small:'='
+      },
+      templateUrl: 'approcessinfo.html'
+   };
+})
+
+
+   .constant('iconInfos', {
+      "!IT": {
+         fillcolor: "#3ca9f4",
+         icontext: "IT"
+      },
+      "!CRM": {
+         fillcolor: "#185174",
+         icontext: "CRM"
+      },
+      "!SCM": {
+         fillcolor: "#4dc1f6",
+         icontext: "SCM"
+      },
+      "!PLM": {
+         fillcolor: "#245c74",
+         icontext: "PLM"
+      },
+      "unknown": {
+         fillcolor: "#f8ab0f",
+         icontext: "?"
+      }
+   })
+   .constant('iconColors', ["#3ca9f4", "#185174", "#4dc1f6", "#245c74", "#f8ab0f"])
+
+   .factory('processData',['$http', '$q', 'urlProcesses', 'urlImg', 'urlSurvey', 'iconInfos', 'urlSurveyStats', 'iconColors', 'urlMessages', 'urlLiveGroup','constantService',
+
+      function ($http, $q, urlProcesses, urlImg, urlSurvey, iconInfos, urlSurveyStats, iconColors, urlMessages, urlLiveGroup, constantService) {
+
+        var userLogin ="";
+        var configHttp = constantService.getConfigHttp();
+
+         var getImgUrl = function(id) {
+            return urlImg + "&table_sys_id=" + id;
+         };
+
+         function setLogin(user){
+           userLogin = user;
+         }
+
+         function getLogin(){
+           return userLogin;
+         }
+
+         function _arrayBufferToBase64(buffer) {
+            var binary = '';
+            var bytes = new Uint8Array(buffer);
+            var len = bytes.byteLength;
+            for (var i = 0; i < len; i++) {
+               binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
+         }
+
+         function loadProcesses() {
+            var deferred = $q.defer();
+            $http.get(urlProcesses, configHttp).then(function(data) {
+               processlist = [];
+               toplevel = [];
+               data.data.result.forEach(function(elem) {
+                  if (elem.hierarchies === "[]") {
+                     //top Level
+                     toplevel.push({
+                        id: elem.id,
+                        name: elem.name,
+                        display: elem.order + " " + elem.name,
+                        checked: (elem.order === "1") ? true : false
+                     });
+                  } else {
+                     elem.display = elem.order + " ";
+                     var hierArr = JSON.parse(elem.hierarchies);
+
+                     elem.display = (hierArr.length > 0) ?
+                        elem.display + hierArr.join(' / ') + ' / ' + elem.name :
+                        elem.display + elem.name;
+                     elem.display2 = (hierArr.length > 1) ?
+                        hierArr.filter(function(elem, index) {
+                           return (index > 0);
+                        }).join(' / ') + ' / ' + elem.name :
+                        elem.name;
+
+                     elem.topLevelName = (hierArr.length > 0) ? hierArr[0] : '';
+
+                     elem.search = elem.display.toLowerCase();
+                     processlist.push(elem);
+                  }
+               });
+
+               console.log(processlist);
+               deferred.resolve({
+                  processes: processlist,
+                  toplevel: toplevel
+               });
+            }, function(error) {
+               deferred.reject(error);
+            });
+            return deferred.promise;
+         }
+
+         function loadProcessImg(id) {
+            var deferred = $q.defer();
+            var imgData = {};
+
+            $http.get(getImgUrl(id))
+               .then(function(res) {
+                  //console.log(res);
+                  if (res.data.result.length === 0) {
+                     // no process diagram found
+                     deferred.resolve({
+                        noDiagramAvailable: true
+                     });
+                     return;
+                  }
+                  imgData.url = res.data.result[0].download_link;
+                  imgData.contentType = res.data.result[0].content_type;
+                  var configHttp_img = {};
+                  angular.copy(configHttp, configHttp_img);
+                  configHttp_img.responseType = "arraybuffer";
+                  $http.get(imgData.url, configHttp_img).then(function(res) {
+                     imgData.data = "data:" + imgData.contentType + ";base64," + _arrayBufferToBase64(res.data);
+                     deferred.resolve(imgData);
+                  });
+
+               });
+            return deferred.promise;
+         }
+
+         function getSurveyQuestions() {
+            var survey = [];
+
+            function addQuestion(questiontext, options, type, shorttext) {
+               var question = {
+                  question: questiontext,
+                  result: 0,
+                  options: options,
+                  type: type,
+                  shorttext: shorttext
+               };
+               survey.push(question);
+            }
+
+            addQuestion("How does the process description fit to the implemented process?", [{
+                  value: 0,
+                  text: "na"
+               },
+               {
+                  value: 1,
+                  text: "no fit"
+               },
+               {
+                  value: 2,
+                  text: "some fit"
+               },
+               {
+                  value: 3,
+                  text: "major business cases described"
+               },
+               {
+                  value: 4,
+                  text: "all business cases described"
+               }
+            ], 'decimal','Description Quality');
+            addQuestion("How well does the process support your daily business?", [{
+                  value: 0,
+                  text: "na"
+               },
+               {
+                  value: 1,
+                  text: "too many manual steps"
+               },
+               {
+                  value: 2,
+                  text: "some automization required"
+               },
+               {
+                  value: 3,
+                  text: "adequately supported"
+               },
+               {
+                  value: 4,
+                  text: "perfectly supported"
+               }
+            ], 'decimal','Business Support');
+
+            addQuestion("How is the quality of the IT applications used in the process?", [{
+                  value: 0,
+                  text: "na"
+               },
+               {
+                  value: 1,
+                  text: "poor"
+               },
+               {
+                  value: 2,
+                  text: "some improvements needed"
+               },
+               {
+                  value: 3,
+                  text: "adequate"
+               },
+               {
+                  value: 4,
+                  text: "good"
+               }
+            ], 'decimal','IT App Quality');
+            addQuestion("What immediate improvements are needed?", [], 'text','immediate improvements needed');
+            return survey;
+         }
+
+         function loadSurvey(surveyId, processId, userName) {
+            var deferred = $q.defer();
+            var survey = [];
+            var getUrl = urlSurvey + '?processid=' + processId + '&username=' + userName + "&surveyid=" + surveyId;
+            $http.get(getUrl, configHttp).then(function(success) {
+               //console.log(success);
+               var loadMessage = "";
+               if (Array.isArray(success.data.result) && (success.data.result.length > 0)) {
+                  var lastUpdate;
+                  success.data.result.forEach(function(oldSurvey) {
+                     var surveyItem = {};
+                     surveyItem.questionid = oldSurvey.questionid;
+                     surveyItem.result = parseInt(oldSurvey.resultdecimal);
+                     surveyItem.resulttext = oldSurvey.resulttext;
+                     surveyItem.sys_id = oldSurvey.sys_id;
+                     survey.push(surveyItem);
+                     lastUpdate = new Date(oldSurvey.sys_updated_on.substring(0, 10));
+                  });
+                  loadMessage = "You already gave feedback on " + lastUpdate.toLocaleDateString() + ". This feedback will be overwritten with the data you enter now!";
+               }
+               deferred.resolve({
+                  survey: survey,
+                  loadMessage: loadMessage
+               });
+
+            }, function(error) {
+               deferred.reject(error);
+            });
+            return deferred.promise;
+         }
+
+         function postSurveyItem(p, question) {
+            var deferred = $q.defer();
+            var surveyResult = {
+               processname: p.processName, //string 60
+               processid: p.processId, //string 40
+               processorder: p.order,
+               hierarchy1order:p.order.split('.')[0],
+               username: p.userName, //string 40
+               surveyid: p.surveyId, //string 40
+               questionid: p.questionId, //decimal
+               questiontype: question.type, //decimal or text
+               resultdecimal: question.result, //decimal
+               resulttext: question.resulttext //string 1000
+            };
+            p.hierarchy.forEach(function(elem, index) {
+               var name = "hierarchy" + (index + 1);
+               surveyResult[name] = elem;
+            });
+            var httpObj = (question.sys_id) ? {
+               method: "PATCH",
+               url: urlSurvey + '/' + question.sys_id,
+               data: surveyResult,
+               config: configHttp
+            } : {
+               method: "POST",
+               url: urlSurvey,
+               data: surveyResult,
+               config: configHttp
+            };
+
+            $http(httpObj).then(function(success) {
+               deferred.resolve(success);
+               //console.log(success);
+            }, function(error) {
+               deferred.reject(error);
+            });
+            return deferred.promise;
+         }
+
+
+         function getProcessIcon(proc) {
+            var icon = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="679.325 6817 43.314 40"><g id="gruppe-104"><path id="ellipse" fill="fillcolor" d="M700.982 6817c11.96 0 21.657 8.953 21.657 20s-9.7 20-21.658 20-21.657-8.955-21.657-20 9.7-20 21.657-20z"/><g id="gruppe-121"><text id="group" style="fill: #fff; font-size: 14px; font-family: Roboto-Medium, Roboto; font-weight: 500; opacity: 0.87;" transform="translate(701.746 6841.995)" text-anchor="middle"><tspan x="0" y="0">icontext</tspan></text></g></g></svg>';
+            return icon.replace('fillcolor', iconInfos[proc].fillcolor).replace('icontext', iconInfos[proc].icontext);
+         }
+
+         function getDetailIcon(proc) {
+            var icon = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="869 6271 18 16"><path id="pfad" fill="fillcolor" d="M869 6271l9 16 9-16zm3.38 2h11.25l-5.63 10z"/></svg>';
+            return icon.replace('fillcolor', iconInfos[proc].fillcolor);
+         }
+
+         function getHierIcon(proc) {
+            var procArr = ['E2E Prozesse','Kernprozesse','Managementprozesse','Unterstützungsprozesse'];
+            var icon = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="679.325 6817 43.314 40"><g id="gruppe-104"><path id="ellipse" fill="fillcolor" d="M700.982 6817c11.96 0 21.657 8.953 21.657 20s-9.7 20-21.658 20-21.657-8.955-21.657-20 9.7-20 21.657-20z"/><g id="gruppe-121"><text id="group" style="fill: #fff; font-size: 14px; font-family: Roboto-Medium, Roboto; font-weight: 500; opacity: 0.87;" transform="translate(701.746 6841.995)" text-anchor="middle"><tspan x="0" y="0">icontext</tspan></text></g></g></svg>';
+            return icon.replace('fillcolor', iconColors[procArr.indexOf(proc)]).replace('icontext', proc.substr(0, 3));
+         }
+
+         function getHierDetailIcon(index) {
+            var icon = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="869 6271 18 16"><path id="pfad" fill="fillcolor" d="M869 6271l9 16 9-16zm3.38 2h11.25l-5.63 10z"/></svg>';
+            return icon.replace('fillcolor', iconColors[(index % 4)]);
+         }
+
+
+         function getMockSurveyData() {
+            var mockData = {
+               values: [],
+               details: []
+            };
+
+            function addValue(process, description, businessSupport, itSupport, level2) {
+               var obj = {
+                  name: process,
+                  processIcon: getProcessIcon(process),
+                  description: description,
+                  businessSupport: businessSupport,
+                  itSupport: itSupport,
+                  detailIcon: getDetailIcon(process),
+                  level2: level2
+               };
+               mockData.values.push(obj);
+            }
+
+            function addDetails(name, description, businessSupport, itSupport, text, date) {
+               var obj = {
+                  name: name,
+                  description: description,
+                  businessSupport: businessSupport,
+                  itSupport: itSupport,
+                  text: text,
+                  date: date,
+                  assignments: name.split('/')
+               };
+               mockData.details.push(obj);
+            }
+
+            addValue("!CRM", 1.2, 2, 3, ["Master Data", "Product configHttpuration", "Offer Management"]);
+            addValue("!SCM", 1.2, 2, 3, ["SCM-1", "SCM-2", "SCM-3", "SCM-4", "SCM-5"]);
+            addValue("!PLM", 1.2, 2, 3, []);
+
+
+            addDetails("!CRM/Master Data/Customer Creation", 1, 1.7, 2.1, "Customer creation is a pain!", Date.parse("2016-10-09"));
+            addDetails("!CRM/Master Data/Customer Creation", 3, 3, 2, "Customer creation would be easy going\nBut the application sucks", Date.parse("2016-10-07"));
+            addDetails("!CRM/Master Data/Customer Creation", 1, 1.7, 3, "Customer creation is fun!", Date.parse("2016-10-09"));
+            addDetails("!CRM/Master Data/Customer Creation", 3, 1, 4, "Customer creation would be easy going\nThe app is now super!", Date.parse("2016-10-07"));
+
+            return mockData;
+         }
+
+         function readSurveyStatsHier1(hier1,hier2) {
+            var deferred = $q.defer();
+
+            var url = urlSurveyStats +
+                  ((hier1 && hier2) ? '?sysparm_query='+encodeURIComponent('questiontype=decimal'+'^hierarchy1='+hier1 + '^hierarchy2=' + hier2 + '^ORprocessnameSTARTSWITH' + hier2)+'&sysparm_avg_fields=resultdecimal&sysparm_group_by=hierarchy1,questionid' :
+                  '?sysparm_query=questiontype=decimal&sysparm_avg_fields=resultdecimal&sysparm_group_by=hierarchy1,questionid');
+            $http.get(url, configHttp).then(function(res) {
+               var statobj = {}, statarr = [], obj = {};
+               if (res.data.result) {
+                  res.data.result.forEach(function(item) {
+
+                     item.groupby_fields.forEach(function(groupby) {
+                        obj[groupby.field] = groupby.value;
+                     });
+                     if (!statobj[obj.hierarchy1]) {
+                        statobj[obj.hierarchy1] = [];
+                     }
+
+                     statobj[obj.hierarchy1].push({
+                        questionid: obj.questionid,
+                        avg: item.stats.avg.resultdecimal
+                     });
+                  });
+
+                  var count = 0;
+                  for (var prop in statobj) {
+                     statarr.push({
+                        hierarchy1: prop,
+                        hierarchy2: (hier2) ? hier2 : null,
+                        iconHier: getHierIcon(prop, count),
+                        iconDetail: getHierDetailIcon(count),
+                        avg: statobj[prop]
+                     });
+                     count++;
+                  }
+               }
+               console.log(statarr);
+               deferred.resolve(statarr);
+
+            }, function(error) {
+               deferred.reject(error);
+            });
+
+            return deferred.promise;
+
+         }
+
+         function readSurveyStatsHier12(statsHier1,hier2){
+
+         }
+
+         function loadHier2(hier1) {
+            var url = urlProcesses + '^hierarchies=["' + hier1 + '"]';
+            var deferred = $q.defer();
+            $http.get(url, configHttp).then(function(res) {
+               deferred.resolve(res.data.result);
+
+            }, function(error) {
+               deferred.reject(error);
+            });
+            return deferred.promise;
+         }
+
+         function readSurveysHier12(hier1, hier2) {
+            var url = urlSurvey + '?sysparm_query=' + encodeURIComponent('hierarchy1='+hier1 + '^hierarchy2=' + hier2 + '^ORprocessnameSTARTSWITH' + hier2);
+            //var url = urlSurvey + '?hierarchy1=' + escape(hier1) + '&hierarchy2=' + escape(hier2);
+            var deferred = $q.defer();
+            var surobj = {};
+            $http.get(url, configHttp).then(function(res) {
+
+               if (res.data.result) {
+                  res.data.result.forEach(function(item) {
+                     if (!surobj[item.processid]) {
+                        var hierarchies = [];
+                        for (var i=2;i<=5;i++) {
+                          if (item['hierarchy'+i]) {
+                            hierarchies.push(item['hierarchy'+i]);
+                          }
+                        }
+                        hierarchies.push(item.processname);
+                        // hierarchies.push(item.hierarchy2);
+                        // hierarchies.push(item.hierarchy3);
+                        // hierarchies.push(item.hierarchy4);
+                        // hierarchies.push(item.hierarchy5);
+                        surobj[item.processid] = {
+                           hierarchies: hierarchies,
+                           name: item.processname
+                        };
+                     }
+                     var userProp = "USER" + item.username;
+                     if (!surobj[item.processid][userProp]) {
+                        surobj[item.processid][userProp] = {
+                           username: item.username
+                        };
+                     }
+                     surobj[item.processid][userProp]["q"+item.questionid] = {
+                        questiontype: item.questiontype,
+                        resultdecimal: item.resultdecimal,
+                        resulttext: item.resulttext
+                     };
+
+                  });
+                  var resultArr = [];
+                  for (var prop in surobj) {
+                     for (var prop2 in surobj[prop]) {
+                        if (prop2.startsWith("USER")) {
+                           var resultItem = {};
+                           resultItem.processid = prop;
+                           resultItem.name = surobj[prop].name;
+                           resultItem.hierarchies = surobj[prop].hierarchies;
+                           resultItem.surveyResults = surobj[prop][prop2];
+                           resultArr.push(resultItem);
+                        }
+                     }
+                  }
+                  console.log(resultArr);
+                  deferred.resolve(resultArr);
+               } else {
+                  deferred.resolve([]);
+               }
+            }, function(error) {
+               deferred.reject(error);
+            });
+            return deferred.promise;
+
+         }
+
+         function loadMessages(pUrl) {
+           var url = (pUrl) ? pUrl:urlMessages+"?sysparm_query=groupSTARTSWITH!%5EORDERBYDESCsys_created_on&sysparm_display_value=all&sysparm_fields=sys_id%2Cmessage%2Cgroup%2Cprofile%2Creply_to%2Csys_created_on%2Csys_created_by&sysparm_limit=15";
+           var deferred = $q.defer();
+           var regex = /(<.*?>);rel=\".*?\"/g;
+
+           $http.get(url,configHttp).then(function(success){
+             //console.log(success);
+             var relNext;
+             var messages = {items:success.data.result};
+
+             if (success.headers('link')){
+                  relNext = success.headers('link').match(regex).filter(function(elem){
+                  return (elem.search('rel="next"') != -1);
+                });
+                if (relNext.length > 0) {
+                  relNext = relNext[0].split(';rel')[0];
+                  relNext = relNext.substr(1,relNext.length-2);
+                  //console.log(relNext);
+                }
+              }
+
+             if (relNext && (relNext.length > 0)) {messages.nextUrl = relNext;}
+
+             messages.items.forEach(function(m){
+               try {
+                 var fn = m.group.display_value.split('/')[0].slice(1);
+                 m.avatarSvg = getHierIcon(fn);
+                 m.groupShort = m.group.display_value.split('/')[1];
+                 m.topLevelName = fn;
+               }
+               catch(e) {
+                 m.groupShort = m.group.display_value.slice(1);
+                 m.topLevelName = m.groupShort;
+                 m.avatarSvg = getHierIcon(m.groupShort);
+               }
+             });
+             deferred.resolve(messages);
+             },function(error){
+               console.log(error);
+               deferred.reject(error);
+             });
+           return deferred.promise;
+         }
+
+         function postMessage(message){
+          //  message:$scope.newMessage.msgtext,
+          //  group: modalData.group.value
+           var deferred = $q.defer();
+           $http.post(urlMessages,message,configHttp).then(function(success){
+             console.log("Feed Message posted");
+             deferred.resolve();
+           }, function(error){
+             deferred.reject();
+           });
+
+           return deferred.promise;
+         }
+
+         function createLiveGroup(group){
+           var deferred = $q.defer();
+           var url = urlLiveGroup + '?sysparm_query=' + encodeURIComponent('name='+group);
+           $http.get(url,configHttp)
+           .then(function(res){
+             if ((res.data.result.length > 0) && (res.data.result[0].name) && (res.data.result[0].name === group)) {
+               // deferred.resolve();
+               return res;
+             }
+             else { return $http.post(url,{name:group},configHttp); }
+            })
+           .then(function(res){
+              if (res.status == 200 || res.status == 201)  {deferred.resolve(res.status);} else {deferred.reject();}
+           })
+           .catch(function(error){
+             deferred.reject(error);
+           });
+
+           return deferred.promise;
+         }
+
+         function postMessageSurveyDone(phierarchy,pname,survey) {
+           var deferred = $q.defer();
+           var m = {
+             message:"Process: "+pname+"\n"+"A new Feedback has been posted!\n\n",
+             group:'!' + ((phierarchy.length < 2) ? phierarchy[0] + '/' + pname : phierarchy[0] + '/' + phierarchy[1])
+           };
+           survey.forEach(function(surveyItem){
+             if (surveyItem.type == 'decimal'){
+                m.message = m.message + surveyItem.shorttext + ": " + surveyItem.result +
+                " (" + surveyItem.options[surveyItem.result].text + ")\n"  ;}
+                if (surveyItem.type == 'text'){
+                   m.message = m.message + '\n'+ surveyItem.question + "\n" + surveyItem.resulttext ;}
+
+          });
+          createLiveGroup(m.group)
+          .then(function(res){
+            return postMessage(m);
+          }).then(function(res) {
+            deferred.resolve(res);
+          }).catch(function(error){
+            deferred.reject(error);
+          });
+          return deferred.promise;
+         }
+
+         return {
+            hello: function() {
+               return "hello";
+            },
+            loadProcesses: loadProcesses,
+            loadProcessImg: loadProcessImg,
+            getSurveyQuestions: getSurveyQuestions,
+            loadSurvey: loadSurvey,
+            postSurveyItem: postSurveyItem,
+            getMockSurveyData: getMockSurveyData,
+            readSurveyStatsHier1: readSurveyStatsHier1,
+            loadHier2: loadHier2,
+            readSurveysHier12: readSurveysHier12,
+            loadMessages: loadMessages,
+            postMessage: postMessage,
+            postMessageSurveyDone: postMessageSurveyDone,
+            setLogin:setLogin,
+            getLogin:getLogin
+         };
+
+
+      }]);
+]]></script>
+        <script_name>processData</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-22 10:12:55</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>713b9ad60f4932005eaa48dce1050e13</sys_id>
+        <sys_mod_count>20</sys_mod_count>
+        <sys_name>x_70016_app_proc.processData</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sys_ui_script_713b9ad60f4932005eaa48dce1050e13</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-03-06 15:46:46</sys_updated_on>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

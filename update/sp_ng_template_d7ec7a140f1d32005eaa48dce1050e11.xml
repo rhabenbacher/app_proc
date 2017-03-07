@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>apdetail.html</id>
+        <sp_widget display_value="app_proc_all">1ef7fed00f1d32005eaa48dce1050eb1</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-28 17:45:34</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>d7ec7a140f1d32005eaa48dce1050e11</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>apdetail.html</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_ng_template_d7ec7a140f1d32005eaa48dce1050e11</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-03-01 07:08:25</sys_updated_on>
+        <template><![CDATA[<md-dialog aria-label="detail" class="modSize">
+    <ap-modal-title-toolbar toolbar-cls="md-primary" icon-cls="cwhite" title="title" click-evt="cancel()">
+    </ap-modal-title-toolbar>
+    <md-dialog-content>
+        <div layout="row">
+            <div flex="{{(layout.isWindowSmall?100:40)}}" flex-gt-xs="33" ng-show="layout.showNav" class="minw250">
+                <md-list ng-repeat="item in nav.items track by $index" class="m025">
+                    <md-list-item ng-click="navigate(item,$index)" ng-class="{'listItemChecked':nav.checkedIndex == {{$index}} && {{!layout.isWindowSmall}}}">
+                        <p class="md-subhead">{{item.order}} {{item.name}}</p>
+                        <md-icon class="md-secondary" md-svg-src="{{nav.checkedIcon}}" ng-show="nav.checkedIndex == {{$index}}"
+                              ng-class="{'cwhite':nav.checkedIndex == {{$index}} && {{!layout.isWindowSmall}}}"></md-icon>
+                    </md-list-item>
+                </md-list>
+            </div>
+            <md-progress-linear md-mode="indeterminate" ng-hide="!progressShow" id="topNav"></md-progress-linear>
+            <div flex ng-show="layout.showCards">
+                <div layout="row" layout-wrap>
+                    <div flex="100" flex-gt-sm="50" layout="row" layout-align="start stretch" ng-if="(detailSummary.length > 0)">
+                        <md-card style="flex-grow:1;">
+                            <md-card-content layout="column" id="topNav">
+                                <h3 flex class="mt05 mb025" md-colors="{color:'primary'}">{{detailSummary[0].hierarchy2}}</h3>
+                                <h4 flex class="mt025 mb1 cgrey">Process Average</h5>
+
+                                <div flex layout="row" ng-repeat="avg in detailSummary[0].avg track by $index" class="maxw250">
+                                    <h4 flex="85" class="mv025 fs16">{{['Description Quality','Business Support Quality','IT Application Quality'][$index]}}</h4>
+                                    <h4 flex="15" class="mv025 fs16" md-colors="::{color:'{{getColor(avg.avg)}}'}">{{avg.avg|number:2}}</h4>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                    </div>
+
+                    <div flex="100" flex-gt-sm="50" layout="row" layout-align="start stretch" ng-repeat="detail in detailList track by $index">
+                        <md-card style="flex-grow:1;">
+                            <md-card-content>
+                                <div layout="column">
+                                    <p class="md-caption m0 mb05 tar">{{ detail.sys_updated_on|date:'yy-MM-dd' }}</p>
+                                    <div layout="row" layout-wrap>
+                                        <p class="bgprim2 md-caption m0 mr025 mb025 ph05 pv025 brad1 fw500" ng-class="{mr0:$last,bgprim6:$first,colwhite:$first}" ng-repeat="text in detail.hierarchies">{{text}}</p>
+                                    </div>
+
+                                    <h3 class="mv05"><span class="md-title" md-colors="::{color:'{{getColor(detail.surveyResults.q0.resultdecimal)}}'}">{{detail.surveyResults.q0.resultdecimal|number:2}}</span><span class="md-caption" md-colors="::{color:'{{getColor(detail.description)}}'}"> Des</span>
+                        <span class="md-title" md-colors="::{color:'{{getColor(detail.surveyResults.q1.resultdecimal)}}'}"> {{detail.surveyResults.q1.resultdecimal|number:2}}</span><span class="md-caption" md-colors="::{color:'{{getColor(detail.businessSupport)}}'}"> Bus</span>
+                        <span class="md-title" md-colors="::{color:'{{getColor(detail.surveyResults.q2.resultdecimal)}}'}"> {{detail.surveyResults.q2.resultdecimal|number:2}}</span><span class="md-caption" md-colors="::{color:'{{getColor(detail.itSupport)}}'}"> IT</span>
+                    </h3>
+                                    <p class="md-body-1 m0" style="white-space:pre-line;">{{ detail.surveyResults.q3.resulttext }}</p>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <md-button class="md-fab md-fab-bottom-right md-primary" aria-label="Show Nav" ng-click="doShowNav()" ng-show="layout.showNavButton">
+            <md-icon md-svg-src="{{nav.buttonIcon}}"></md-icon>
+        </md-button>
+
+    </md-dialog-content>
+
+
+</md-dialog>
+]]></template>
+    </sp_ng_template>
+</record_update>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="questiontype" table="x_70016_app_proc_surveyresults" version="3">
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>questiontype</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>-- New choice --</label>
+            <language>en</language>
+            <name>x_70016_app_proc_surveyresults</name>
+            <sequence/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-02-17 10:31:32</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>0130b4f00f4132005eaa48dce1050e61</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-02-17 10:31:32</sys_updated_on>
+            <value>-- New choice --</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>questiontype</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>decimal</label>
+            <language>en</language>
+            <name>x_70016_app_proc_surveyresults</name>
+            <sequence/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-02-17 10:32:07</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>344078f00f4132005eaa48dce1050e7b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-02-17 10:32:07</sys_updated_on>
+            <value>decimal</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>questiontype</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>text</label>
+            <language>en</language>
+            <name>x_70016_app_proc_surveyresults</name>
+            <sequence/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-02-17 10:32:22</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>535038b00f4132005eaa48dce1050ee4</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-02-17 10:32:22</sys_updated_on>
+            <value>text</value>
+        </sys_choice>
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>questiontype</element>
+            <name>x_70016_app_proc_surveyresults</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-02-17 10:31:32</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>4930b4f00f4132005eaa48dce1050e61</sys_id>
+            <sys_mod_count>3</sys_mod_count>
+            <sys_name>questiontype</sys_name>
+            <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+            <sys_update_name>sys_choice_x_70016_app_proc_surveyresults_questiontype</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-02-17 10:32:22</sys_updated_on>
+        </sys_choice_set>
+    </sys_choice>
+</record_update>

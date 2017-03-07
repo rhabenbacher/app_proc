@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>apsurvey.html</id>
+        <sp_widget display_value="app_proc_all">1ef7fed00f1d32005eaa48dce1050eb1</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-28 17:49:47</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>c3dd7e540f1d32005eaa48dce1050ef7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>apsurvey.html</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_ng_template_c3dd7e540f1d32005eaa48dce1050ef7</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-02-28 17:49:47</sys_updated_on>
+        <template><![CDATA[<md-dialog aria-label="Survey" class="modSize">
+
+    <ap-modal-title-toolbar toolbar-cls="md-primary" icon-cls="cwhite" title="processName" click-evt="cancel()">
+    </ap-modal-title-toolbar>
+    <md-dialog-content layout-column class="md-padding">
+        <md-progress-linear ng-disabled="!initializing" class="md-primary"></md-progress-linear>
+        <section layout="column">
+              <h2 class="cgrey" id="titleElement">Process Survey</h2>
+       </section>
+        <section layout="column" ng-if="loadMessage" ng-hide="(saving.progress >= 1)" layout-align="center center" class="md-body-2">
+            <p md-colors="{color:'primary'}">{{loadMessage}}</p>
+        </section>
+        <section layout="column">
+            <ap-survey-question ng-repeat="surveypart in survey" question="surveypart">
+            </ap-survey-question>
+        </section>
+
+        <section ng-class="{'visible' : '(saving.progress >= 1)'}" layout-gt-sm="row" layout="column" layout-align="end center" class="md-body-2">
+            <md-progress-linear md-mode="query" ng-disabled="!(saving.progress == 1)" class="md-primary"></md-progress-linear>
+            <div style="min-width:150px;padding-left:10px;" class="">
+                <p md-colors="{color:'primary'}" style="text-align:center;">{{saving.text}}</p>
+            </div>
+            <section>
+    </md-dialog-content>
+    <md-dialog-actions layout-gt-xs="row" layout="column">
+        <md-button class="md-primary md-raised" ng-click="submitSurvey()" ng-disabled="saving.progress >=1">Submit Survey</md-button>
+        <md-button class="md-raised" ng-disabled="(saving.progress == 1)" ng-click="cancel()">Cancel</md-button>
+    </md-dialog-actions>
+</md-dialog>
+]]></template>
+    </sp_ng_template>
+</record_update>

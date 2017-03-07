@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>app_proc_header_login</id>
+        <sp_widget display_value="IT Marketplace Header">d5e955660f1132005eaa48dce1050e2d</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-03-07 12:01:29</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>2f417d620f5132005eaa48dce1050e83</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>app_proc_header_login</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_ng_template_2f417d620f5132005eaa48dce1050e83</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-03-07 12:01:29</sys_updated_on>
+        <template><![CDATA[<div class="login_widget">
+  <sp-widget widget="data.loginWidget"></sp-widget>
+  <style>
+    .modal-content { border: 0px solid transparent; }
+  </style>
+</div>]]></template>
+    </sp_ng_template>
+</record_update>

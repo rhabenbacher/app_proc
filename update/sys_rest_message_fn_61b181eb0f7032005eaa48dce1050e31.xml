@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_rest_message_fn">
+    <sys_rest_message_fn action="INSERT_OR_UPDATE">
+        <authentication_type>basic</authentication_type>
+        <basic_auth_password/>
+        <basic_auth_profile display_value="admin">9652092f0f7032005eaa48dce1050efc</basic_auth_profile>
+        <basic_auth_user/>
+        <content>{"Structure":{"Process":[{"_DiagramTyp":"MTX_PROCESS_HOUSE","_Id":"b55de010-e86f-4b63-b8cd-04f0757d032d","_Name":"Prozesshaus","_State":"AVTX_SHOW","_Order":"1","_ParentId":""},{"_DiagramTyp":"MTX_SUB_CATEGORY","_Id":"4d70ccc4-e822-4496-a4f0-7ff24386f168","_Name":"Managementprozesse","_State":"AVTX_SHOW","_Order":"1","_ParentId":"b55de010-e86f-4b63-b8cd-04f0757d032d"},{"_DiagramTyp":"MTX_MAIN_PROCESS","_Id":"260955dd-f53b-4ccc-82e8-75a2c99e02d2","_Name":"Strategic Planning &amp; Controlling","_State":"AVTX_SHOW","_Order":"1","_ParentId":"4d70ccc4-e822-4496-a4f0-7ff24386f168"},{"_DiagramTyp":"MTX_SUB_PROCESS","_Id":"d1c46bcb-2fdd-430b-b155-671d21efbe2a","_Name":"Produktweiterentwicklung strategisch planen","_State":"AVT_IN_PROC","_Order":"1","_ParentId":"260955dd-f53b-4ccc-82e8-75a2c99e02d2"},{"_DiagramTyp":"MTX_MAIN_PROCESS","_Id":"0d12c107-5b73-4afa-9636-cbc1a43f505e","_Name":"Financial Planning &amp; Controlling","_State":"AVTX_SHOW","_Order":"2","_ParentId":"4d70ccc4-e822-4496-a4f0-7ff24386f168"}],"_xmlns:xsd":"http://www.w3.org/2001/XMLSchema","_xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","_xmlns":"http://schemas.symbioworld.com/interface/v2","_Lcid":"1031"}}</content>
+        <function_name>test</function_name>
+        <http_method>post</http_method>
+        <lock>false</lock>
+        <oauth2_profile/>
+        <protocol_name/>
+        <qualified_name>testprocupload [ test ]</qualified_name>
+        <rest_endpoint>https://dev20730.service-now.com/api/x_70016_app_proc/processes/upload</rest_endpoint>
+        <rest_message display_value="testprocupload">5271812f0f7032005eaa48dce1050e3c</rest_message>
+        <sys_class_name>sys_rest_message_fn</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-13 14:36:37</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>61b181eb0f7032005eaa48dce1050e31</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>test</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sys_rest_message_fn_61b181eb0f7032005eaa48dce1050e31</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-02-13 14:38:53</sys_updated_on>
+        <use_basic_auth>false</use_basic_auth>
+        <use_mid_server/>
+        <use_mutual_auth>true</use_mutual_auth>
+    </sys_rest_message_fn>
+</record_update>

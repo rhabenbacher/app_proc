@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl/>
+        <http_method>POST</http_method>
+        <name>upload_structure</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    // implement resource here
+	var body = request.body.data;
+	var pobj = {};
+	var topnode = "";
+	var messageArr = [];
+	
+	// Helper Structure to build Hierarchie		
+	body.Structure.Process.forEach(function(p){
+		if (p._DiagramTyp === "MTX_PROCESS_HOUSE") {
+			topnode = p._Id;
+		}
+		pobj[p._Id]=p;		
+	});
+	
+	var parr = [];
+	body.Structure.Process.forEach(function(p){
+		if (p._DiagramTyp !== "MTX_MAIN_PROCESS" && p._DiagramTyp !== "MTX_SUB_PROCESS" && p._DiagramTyp !== "MTX_SUB_CATEGORY"){
+			return;
+		} 
+			
+		var gr = new GlideRecord('x_70016_app_proc_processes');
+		if (!gr.get('id',p._Id)) 
+		{
+		gr.initialize(); 
+		gr.id = p._Id;
+		}
+		// var gr = {};
+		gr.type = p._DiagramTyp;
+		gr.name = p._Name;
+		gr.parentid = p._ParentId;
+		gr.order = p._Order;
+		gr.state = p._State;
+		var parentId = p._ParentId;
+		var hierarchies=[];
+		while (parentId != "" && parentId != topnode) {
+			hierarchies.unshift(pobj[parentId]._Name);
+			gr.order = pobj[parentId]._Order+"."+gr.order;
+			
+			parentId=pobj[parentId]._ParentId;				
+		}
+		gr.hierarchies = JSON.stringify(hierarchies);
+		//parr.push(gr);
+		var message = {};
+		message.code = gr.update() ? 201:500 ;
+		message.text = (message.code === 201) ? "Insert/Update success id: "+gr.id+" name: "+gr.name:"Insert/Update Error id: "+gr.id ;
+		messageArr.push(message);
+	});
+	
+	
+	return {messages:messageArr};
+	
+	
+
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_70016_app_proc/processes/upload</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/upload</relative_path>
+        <request_example/>
+        <requires_acl_authorization>false</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-13 13:11:44</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>e26e2c670f7032005eaa48dce1050ea6</sys_id>
+        <sys_mod_count>26</sys_mod_count>
+        <sys_name>upload_structure</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sys_ws_operation_e26e2c670f7032005eaa48dce1050ea6</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-02-13 15:41:41</sys_updated_on>
+        <web_service_definition display_value="processes">094e68670f7032005eaa48dce1050e88</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>

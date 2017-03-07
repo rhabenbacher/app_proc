@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_dependency">
+    <sp_dependency action="INSERT_OR_UPDATE">
+        <module>ap.constantService</module>
+        <name>constantService</name>
+        <page_load>true</page_load>
+        <sp_portals/>
+        <sys_class_name>sp_dependency</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-03-01 14:32:07</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>ff2a93280f1572005eaa48dce1050e15</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>constantService</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_dependency_ff2a93280f1572005eaa48dce1050e15</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-03-01 14:32:07</sys_updated_on>
+    </sp_dependency>
+</record_update>

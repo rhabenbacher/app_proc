@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>showprocess.html</id>
+        <sp_widget display_value="app_proc_info">c16c161a0f4932005eaa48dce1050e23</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-27 10:42:20</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>637258440f1132005eaa48dce1050edf</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>showprocess.html</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_ng_template_637258440f1132005eaa48dce1050edf</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-02-27 10:42:20</sys_updated_on>
+        <template><![CDATA[<md-dialog aria-label="ProcessConfirmation" class="FullScreenDialog">
+    <!-- <md-toolbar class="md-primary">
+        <div class="md-toolbar-tools">
+            <h3 class="md-title">{{image.title}}</h3>
+        </div>
+    </md-toolbar> -->
+    <ap-modal-title-toolbar toolbar-cls="md-primary" icon-cls="cwhite" title="image.title" click-evt="cancel()">
+    </ap-modal-title-toolbar>
+
+    <md-dialog-content>
+        <div class="md-dialog-content">
+          <img ng-src="{{image.data}}" ng-style="image.style" />
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="zoom(factor100)">100%</md-button>
+        <md-button ng-click="zoom(factor125)" hide-xs>125%</md-button>
+        <md-button ng-click="zoom(factor150)" hide-gt-xs>150%</md-button>
+        <span flex></span>
+        <md-button ng-click="cancel()">
+            Cancel
+        </md-button>
+        <md-button ng-click="nextStep()" class="md-primary">
+            Continue
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>
+]]></template>
+    </sp_ng_template>
+</record_update>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>apmessages.html</id>
+        <sp_widget display_value="app_proc_all">1ef7fed00f1d32005eaa48dce1050eb1</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-28 17:46:14</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>101d7a540f1d32005eaa48dce1050e72</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>apmessages.html</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_ng_template_101d7a540f1d32005eaa48dce1050e72</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-03-06 15:24:34</sys_updated_on>
+        <template><![CDATA[<h3 class="md-title">Latest News</h3>
+<h4 ng-if="c.authError" md-colors="{color:'accent-A100'}">Authorization Error - Please Login</h4>
+<md-list>
+    <md-card ng-repeat="message in c.messages.items" layout="column" class="pt025">
+        <div layout="row" layout-align="start center">
+            <div flex class="maxw50">
+                <md-icon class="w40 h40 m05" aria-lable="icon" md-svg-src={{message.avatarSvg}}>
+                    <md-tooltip md-direction="right" class="fs14">{{message.topLevelName}}</md-tooltip>
+                </md-icon>
+            </div>
+            <h3 flex class="md-title m05" ng-if="!small">{{message.groupShort}} <span class="md-caption"> - {{message.sys_created_by.display_value}}@{{message.sys_created_on.display_value}} </span></h3>
+            <div flex ng-if="small">
+              <h4 class="md-subhead mv025 ml05 fw500">{{message.groupShort}} </h4>
+              <h5 class="md-caption m0 ml05" ng-if="small">{{message.sys_created_by.display_value}}@{{message.sys_created_on.display_value}}</h5>
+            </div>
+        </div>
+
+        <div flex class="m05 pa05" layout="row" layout-align="start start">
+            <p flex="85" style="white-space:pre-line;" class="m025 md-body-1">{{message.message.display_value}}</p>
+            <md-button flex="15" class="mt025" ng-click="c.addMessage(message.group)">
+              <md-icon class="icongrey wh30" aria-label="Chat" md-svg-src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPiAgICA8cGF0aCBkPSJNMTQgMkg2Yy0xLjEgMC0xLjk5LjktMS45OSAyTDQgMjBjMCAxLjEuODkgMiAxLjk5IDJIMThjMS4xIDAgMi0uOSAyLTJWOGwtNi02em0yIDE0aC0zdjNoLTJ2LTNIOHYtMmgzdi0zaDJ2M2gzdjJ6bS0zLTdWMy41TDE4LjUgOUgxM3oiLz48L3N2Zz4="></md-icon>
+            </md-button>
+        </div>
+    </md-card>
+</md-list>
+<md-progress-linear md-mode="indeterminate" ng-show="c.loading"></md-progress-linear>
+<section layout="row" layout-align="end start">
+    <md-button class="md-raised md-primary" ng-show="(c.messages.nextUrl && !c.loading)" ng-click="c.loadMore(c.messages.nextUrl)">Load more</md-button>
+</section>
+]]></template>
+    </sp_ng_template>
+</record_update>

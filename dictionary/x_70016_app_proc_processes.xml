@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="processes" max_length="40" name="x_70016_app_proc_processes" type="collection">
+        <element label="Atx author" max_length="40" name="atx_author" type="string"/>
+        <element label="At name" max_length="40" name="at_name" type="string"/>
+        <element label="At pers resp" max_length="40" name="at_pers_resp" type="string"/>
+        <element label="At valid from" max_length="40" name="at_valid_from" type="glide_date_time"/>
+        <element label="At valid until" max_length="40" name="at_valid_until" type="glide_date_time"/>
+        <element label="Hierarchies" max_length="400" name="hierarchies" type="string"/>
+        <element label="ID" max_length="40" name="id" type="string"/>
+        <element label="Name" max_length="255" name="name" type="string_full_utf8"/>
+        <element label="Order" max_length="40" name="order" type="string"/>
+        <element label="Parentid" max_length="40" name="parentid" type="string"/>
+        <element label="State" max_length="40" name="state" type="string"/>
+        <element label="type" max_length="40" name="type" type="string"/>
+    </element>
+</database>

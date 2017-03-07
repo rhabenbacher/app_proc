@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function mainCtrl($scope, $rootScope, $mdDialog, $timeout, processData) {
+      var vm = this;
+      vm.messages = [];
+
+      function loadMsg() {
+         processData.loadMessages().then(function(messages) {
+            vm.messages = messages;
+         });
+      }
+
+      loadMsg();
+      $rootScope.$on('NewFeedMessage', loadMsg);
+
+      vm.addMessage = function(group) {
+         var modalData = {};
+         modalData.messages = vm.messages.items.filter(function(m) {
+            return m.group.value === group.value;
+         });
+         modalData.title = group.display_value;
+         modalData.group = group;
+
+         $mdDialog.show({
+            controller: DialogController,
+            templateUrl: 'addmessage.html',
+            parent: angular.element(document.body),
+            //      targetEvent: ev,
+            clickOutsideToClose: true,
+            locals: {
+               modalData: modalData
+            },
+         });
+      };
+
+      vm.loadMore = function() {
+        vm.loading = true;
+        processData.loadMessages(vm.messages.nextUrl).then(function(messages) {
+           Array.prototype.push.apply(vm.messages.items,messages.items);
+           if (messages.nextUrl) {
+             vm.messages.nextUrl = messages.nextUrl;
+           }
+           else {
+             delete vm.messages.nextUrl;
+           }
+           vm.loading = false;
+        },function(error){
+            vm.loading = false;
+        });
+
+      };
+
+   }
+
+   function DialogController($scope, $rootScope,$mdDialog, modalData, processData) {
+
+      $scope.title = modalData.title;
+      $scope.messages = modalData.messages;
+      $scope.newMessage = {};
+      $scope.addMessage = function() {
+         var feedMessage = {
+            message: $scope.newMessage.msgtext,
+            group: modalData.group.value
+         };
+
+         processData.postMessage(feedMessage).then(function(success) {
+            $rootScope.$broadcast('NewFeedMessage');
+            $scope.newMessage = {};
+            $mdDialog.cancel();
+         });
+      };
+
+      $scope.hide = function() {
+         $mdDialog.hide();
+      };
+      $scope.cancel = function() {
+         $mdDialog.cancel();
+      };
+
+   }
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>Show and add messages related to processes</description>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>app-proc-msg-list</id>
+        <internal>false</internal>
+        <link/>
+        <name>app_proc_msg_list</name>
+        <option_schema/>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-02-27 10:48:09</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>87731c0c0f1132005eaa48dce1050e0e</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>app_proc_msg_list</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sp_widget_87731c0c0f1132005eaa48dce1050e0e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-02-27 15:19:21</sys_updated_on>
+        <template><![CDATA[<div>
+<!-- your widget template -->
+   <md-content layout="column" class="md-padding">
+        <h3 class="md-title">Latest News</h3>
+        <md-list>
+            <md-card ng-repeat="message in c.messages.items" layout="column" class="pt025">
+                <div layout="row" layout-align="start center">
+                    <div flex class="maxw50">
+                        <md-icon class="w40 h40 m05" aria-lable="icon" md-svg-src={{message.avatarSvg}}>
+                            <md-tooltip md-direction="right" class="fs14">{{message.topLevelName}}</md-tooltip>
+                        </md-icon>
+                    </div>
+                    <h3 flex class="md-title m05">{{message.groupShort}} <span class="md-caption"> - {{message.sys_created_by.display_value}}@{{message.sys_created_on.display_value}} </span></h3>
+                </div>
+                <div flex class="m05 pa05" layout="row" layout-align="start center">
+                    <p flex="90" style="white-space:pre-line;" class="m025">{{message.message.display_value}}</p>
+                    <md-icon flex="10" class="icongrey wh30 mt025" ng-click="c.addMessage(message.group)" aria-label="Chat" md-svg-src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPiAgICA8cGF0aCBkPSJNMTQgMkg2Yy0xLjEgMC0xLjk5LjktMS45OSAyTDQgMjBjMCAxLjEuODkgMiAxLjk5IDJIMThjMS4xIDAgMi0uOSAyLTJWOGwtNi02em0yIDE0aC0zdjNoLTJ2LTNIOHYtMmgzdi0zaDJ2M2gzdjJ6bS0zLTdWMy41TDE4LjUgOUgxM3oiLz48L3N2Zz4="></md-icon>
+                </div>
+            </md-card>
+        </md-list>
+        <md-progress-linear md-mode="indeterminate" ng-show="c.loading"></md-progress-linear>
+        <section layout="row" layout-align="end start">
+            <md-button class="md-raised md-primary" ng-show="(c.messages.nextUrl && !c.loading)" ng-click="c.loadMore(c.messages.nextUrl)">Load more</md-button>
+        </section>
+    </md-content>
+
+</div>]]></template>
+    </sp_widget>
+</record_update>
