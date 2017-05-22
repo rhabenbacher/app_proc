@@ -8,7 +8,7 @@
         <sys_created_on>2017-02-28 17:49:47</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>c3dd7e540f1d32005eaa48dce1050ef7</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>apsurvey.html</sys_name>
         <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
         <sys_policy/>
@@ -16,7 +16,7 @@
         <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
         <sys_update_name>sp_ng_template_c3dd7e540f1d32005eaa48dce1050ef7</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-02-28 17:49:47</sys_updated_on>
+        <sys_updated_on>2017-03-13 10:07:12</sys_updated_on>
         <template><![CDATA[<md-dialog aria-label="Survey" class="modSize">
 
     <ap-modal-title-toolbar toolbar-cls="md-primary" icon-cls="cwhite" title="processName" click-evt="cancel()">
@@ -45,7 +45,6 @@
         <md-button class="md-primary md-raised" ng-click="submitSurvey()" ng-disabled="saving.progress >=1">Submit Survey</md-button>
         <md-button class="md-raised" ng-disabled="(saving.progress == 1)" ng-click="cancel()">Cancel</md-button>
     </md-dialog-actions>
-</md-dialog>
-]]></template>
+</md-dialog>]]></template>
     </sp_ng_template>
 </record_update>

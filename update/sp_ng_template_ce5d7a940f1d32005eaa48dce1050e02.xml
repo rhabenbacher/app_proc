@@ -8,7 +8,7 @@
         <sys_created_on>2017-02-28 17:47:17</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>ce5d7a940f1d32005eaa48dce1050e02</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>5</sys_mod_count>
         <sys_name>approcessinfo.html</sys_name>
         <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
         <sys_policy/>
@@ -16,32 +16,31 @@
         <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
         <sys_update_name>sp_ng_template_ce5d7a940f1d32005eaa48dce1050e02</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-03-06 15:25:06</sys_updated_on>
+        <sys_updated_on>2017-03-13 10:06:29</sys_updated_on>
         <template><![CDATA[<md-card>
   <md-card-header class="mt1">
     <md-card-header-text style="text-align:center;">
       <span class="md-title">{{c.headline}}</span>
-      <h4 ng-if="c.authError" md-colors="{color:'accent-A100'}">Authorization Error - Please Login</h4>
+      <h4 ng-if="c.loadError" md-colors="{color:'accent-A100'}">{{c.loadErrorText}}</h4>
     </md-card-header-text>
+
   </md-card-header>
   <md-card-content>
-
-    <md-grid-list md-cols="9" md-row-height="50px" class="maxw600 mlrauto">
+    <md-progress-linear ng-if="c.progressShow" md-mode="indeterminate" class="md-primary pa05"></md-progress-linear>
+    <md-grid-list md-cols="9" md-row-height="50px" class="maxw600 mlrauto" ng-hide="c.progressShow || c.loadError">
       <md-grid-tile ng-repeat="text in ['','Description Quality','Business Support','IT App Quality',''] track by $index" md-colspan="{{(($index == 0) ? 1:2)}}">
         <h4 class="md-body-1 m0" style="text-align:center;" ng-if="(text&&!small)">{{text}}</h4>
         <h4 class="md-caption m0" style="text-align:center;" ng-if="(text&&small)">{{text}}</h4>
       </md-grid-tile>
     </md-grid-list>
-    <section layout="row" layout-sm="column" layout-align="space-around" ng-hide="!c.progressShow">
-        <md-progress-circular ng-if="c.progressShow" md-mode="indeterminate" class="md-primary" md-diameter="40px"></md-progress-circular>
-    </section>
+
     <md-grid-list md-cols="9" md-row-height="45px" ng-repeat="item in c.values" ng-class-odd="'bgclg'" class="maxw600 mlrauto">
       <md-grid-tile md-colspan="1">
         <md-tooltip md-direction="right">{{item.hierarchy1}}</md-tooltip>
         <md-icon class="md-avatar w40 h40" md-svg-src="{{item.iconHier}}"></md-icon>
       </md-grid-tile>
       <md-grid-tile ng-repeat="elem in item.avg | orderBy:questionid" md-colspan="2">
-        <h1 class="md-title m0" style="text-align:center;" md-colors="::{color:'{{c.getColor(elem.avg)}}'}">{{elem.avg|number:2}}</h1>
+        <h1 class="md-title m0" style="text-align:center;" md-colors="::{color:'{{c.getColor(elem.avg)}}'}">{{elem.avg|number:2}}<md-icon md-colors="::{color:'{{c.getColor(elem.avg)}}'}" md-svg-src="{{c.getIndicator(item,elem)}}"></md-icon></h1>
       </md-grid-tile>
       <md-grid-tile md-colspan="2">
         <md-button class="" ng-click="c.showDetail(item)"><md-icon md-svg-src="{{item.iconDetail}}" aria-label="detail"></md-icon></md-button>
@@ -49,10 +48,10 @@
     </md-grid-list>
 
   </md-card-content>
-  <md-card-actions layout="row" layout-align="center center" ng-if="small">
+  <md-card-actions layout="row" layout-align="center center" ng-if="small" ng-hide="c.progressShow || c.loadError">
     <md-button class="md-primary mr05 mb05" ng-click="c.postFeedback()">Post Feedback</md-button>
   </md-card-actions>
-  <md-card-actions layout="row" layout-align="end center" ng-if="!small">
+  <md-card-actions layout="row" layout-align="end center" ng-if="!small" ng-hide="c.progressShow || c.loadError">
     <md-button class="md-primary" ng-click="c.postFeedback()">Post Feedback</md-button>
   </md-card-actions>
 </md-card>

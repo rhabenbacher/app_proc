@@ -4,32 +4,44 @@
         <client_script><![CDATA[function mainCtrl($scope, $rootScope, $http, $q, $mdDialog, $location, $window, $timeout, processData) {
    var vm = this;
    vm.progressShow = true;
+   vm.loading = true;
    vm.headline = "Feedback Processes&Apps";
+   var statsDeferred = $q.defer();
 
    // get the current ServiceNow User
    processData.setLogin((typeof g_user !== 'undefined') ? g_user.userName : 'admin');
    console.log("Login: "+processData.getLogin());
 
+   function loadError(error) {
+     vm.progressShow = false;
+     vm.loading = false;
+     vm.loadError = true;
+     if (error.status == 401) {
+       vm.loadErrorText = "No authorization! Please Login";
+     }
+     else {
+       vm.loadErrorText = "Connection Error ("+error.status+")!  Please try again later...";
+     }
+   }
 
   function loadData() {
     processData.loadMessages().then(function(messages) {
        vm.messages = messages;
-    },function(error){
-      if (error.status == 401) {
-        vm.authError = true;
-      }
-    });
+       vm.loading = false;
+    },loadError);
    processData.readSurveyStatsHier1().then(function(data) {
       vm.values = data;
       vm.progressShow = false;
-   },function(error){
-      vm.progressShow = false;
-      vm.authError = true;
-   });
+   },loadError);
 
  }
 
    loadData();
+   processData.loadHistoricalSurveyStats().then(function(data){
+     vm.historyStats = data;
+     statsDeferred.resolve(vm.historyStats);
+   });
+
    $rootScope.$on('newSurvey',loadData);
    $rootScope.$on('NewFeedMessage', loadData);
 
@@ -105,6 +117,31 @@
      },function(error){
          vm.loading = false;
      });
+
+   };
+
+   vm.getIndicator = function(item,elem) {
+
+     if (vm.historyStats === undefined) {
+       return statsDeferred.promise;
+     }
+
+     var hist = vm.historyStats.filter(function(line) {
+       return (line.hierarchy1 === item.hierarchy1 && line.questionid === elem.questionid);
+     })[0];
+     if (Math.abs(hist.avg - elem.avg) < 0.2) {
+       // return 0;
+       return processData.getTrendingIcon('flat');
+     }
+     else if ((elem.avg - hist.avg) >= 0.2) {
+       //return "+";
+       return processData.getTrendingIcon('up');
+     }
+     else if ((hist.avg - elem.avg) >= 0.2) {
+       //return "-";
+       return processData.getTrendingIcon('down');
+     }
+
 
    };
 
@@ -518,7 +555,7 @@ function addMsgCtrl($scope, $rootScope,$mdDialog, modalData, processData) {
         <sys_created_on>2017-02-28 17:25:51</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>1ef7fed00f1d32005eaa48dce1050eb1</sys_id>
-        <sys_mod_count>19</sys_mod_count>
+        <sys_mod_count>20</sys_mod_count>
         <sys_name>app_proc_all</sys_name>
         <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
         <sys_policy/>
@@ -526,7 +563,7 @@ function addMsgCtrl($scope, $rootScope,$mdDialog, modalData, processData) {
         <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
         <sys_update_name>sp_widget_1ef7fed00f1d32005eaa48dce1050eb1</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-03-06 15:24:00</sys_updated_on>
+        <sys_updated_on>2017-03-13 10:02:20</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
 <md-content >

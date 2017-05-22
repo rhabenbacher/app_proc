@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl/>
+        <http_method>POST</http_method>
+        <name>upload_pid2</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    var message = {};
+	var body = request.body.data;
+// 	var attributes = {};
+// 	body.Process.Attributes.Attribute.forEach(function(elem){
+// 		attributes[elem._Key] = elem.__text; 
+// 	});
+		
+	var gr = new GlideRecord('x_70016_app_proc_processes');
+	if (!gr.get("id",request.pathParams.id)) {
+		gr.id = request.pathParams.id;
+	}
+	//gr.at_name = attributes.AT_NAME;
+	//gr.at_valid_from = convertdatetime(attributes.AT_VALID_FROM);
+	//gr.at_valid_until = convertdatetime(attributes.AT_VALID_UNTIL);
+	//gr.atx_author = attributes.ATX_AUTHOR;
+	//gr.at_pers_resp = attributes.AT_PERS_RESP;
+	body.attributes.forEach(function(attribute){
+		switch (attribute.CULTURE) {
+			case "1031":
+				gr.at_name = attribute.VALUE;
+				break;
+			case "127":
+				gr.state = attribute.VALUE;
+				break;
+		}
+	});
+	gr.type = body.type;
+	//gr.entitytype = body.entitytype;
+
+	// Add Attachment
+	if (gr.update())
+	{
+		var gs = new GlideSysAttachment();
+		var att_r = new GlideRecord('sys_attachment');
+		att_r.addQuery('table_sys_id',gr.sys_id);
+		att_r.query();
+		message.oldAttachments = att_r.getRowCount();
+		message.oldAttachmentsDeleted = 0;
+		while (att_r.next()) {
+
+			gs.deleteAttachment(att_r.sys_id);
+			message.oldAttachmentsDeleted ++;						
+
+		}
+
+		message.code =  (gs.write(gr,'diagram.svg','svg',
+								  body.svgdiagram)) ? 201:500;
+		message.text = (message.code === 201) ? "Insert/Update Attachment Success":"Insert/Update Error" ;
+	}
+	else {
+		message.code=500;
+		message.text="Process could not be updated";	
+	}
+		 
+	
+		
+
+	
+	return {
+		"id":request.pathParams.id,
+		"message":message
+		};
+
+
+})(request, response);
+
+function convertdatetime(dt) {
+	return new GlideDateTime(dt.replace(/(..)\.(..)\.(....)/,'$3-$2-$1'));
+}
+]]></operation_script>
+        <operation_uri>/api/x_70016_app_proc/processes/upload2/{id}</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/upload2/{id}</relative_path>
+        <request_example/>
+        <requires_acl_authorization>false</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-05-16 12:36:07</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>48685ecd0f3232005eaa48dce1050eef</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>upload_pid2</sys_name>
+        <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
+        <sys_update_name>sys_ws_operation_48685ecd0f3232005eaa48dce1050eef</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-05-16 13:26:14</sys_updated_on>
+        <web_service_definition display_value="processes">094e68670f7032005eaa48dce1050e88</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="SurveyStats" max_length="40" name="x_70016_app_proc_surveystats" type="collection">
+        <element label="Avg" max_length="20" name="avg" type="decimal"/>
+        <element label="Countsurveys" max_length="20" name="countsurveys" type="decimal"/>
+        <element label="Hierarchy1" max_length="60" name="hierarchy1" type="string"/>
+        <element label="Questionid" max_length="40" name="questionid" type="string"/>
+        <element label="Runat" max_length="40" name="runat" type="glide_date_time"/>
+        <element label="Surveyid" max_length="40" name="surveyid" type="string"/>
+    </element>
+</database>

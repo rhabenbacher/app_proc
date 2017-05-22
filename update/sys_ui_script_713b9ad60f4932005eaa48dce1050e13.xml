@@ -101,9 +101,9 @@
    })
    .constant('iconColors', ["#3ca9f4", "#185174", "#4dc1f6", "#245c74", "#f8ab0f"])
 
-   .factory('processData',['$http', '$q', 'urlProcesses', 'urlImg', 'urlSurvey', 'iconInfos', 'urlSurveyStats', 'iconColors', 'urlMessages', 'urlLiveGroup','constantService',
+   .factory('processData',['$http', '$q', 'urlProcesses', 'urlImg', 'urlSurvey', 'iconInfos', 'urlSurveyStats', 'iconColors', 'urlMessages', 'urlLiveGroup','constantService', 'urlApi',
 
-      function ($http, $q, urlProcesses, urlImg, urlSurvey, iconInfos, urlSurveyStats, iconColors, urlMessages, urlLiveGroup, constantService) {
+      function ($http, $q, urlProcesses, urlImg, urlSurvey, iconInfos, urlSurveyStats, iconColors, urlMessages, urlLiveGroup, constantService,urlApi) {
 
         var userLogin ="";
         var configHttp = constantService.getConfigHttp();
@@ -431,6 +431,10 @@
                   '?sysparm_query=questiontype=decimal&sysparm_avg_fields=resultdecimal&sysparm_group_by=hierarchy1,questionid');
             $http.get(url, configHttp).then(function(res) {
                var statobj = {}, statarr = [], obj = {};
+               if (res.headers('content-type').indexOf('application/json') !== 0) {
+                 deferred.reject({status:400});
+                 return;
+               }
                if (res.data.result) {
                   res.data.result.forEach(function(item) {
 
@@ -503,10 +507,7 @@
                           }
                         }
                         hierarchies.push(item.processname);
-                        // hierarchies.push(item.hierarchy2);
-                        // hierarchies.push(item.hierarchy3);
-                        // hierarchies.push(item.hierarchy4);
-                        // hierarchies.push(item.hierarchy5);
+
                         surobj[item.processid] = {
                            hierarchies: hierarchies,
                            name: item.processname
@@ -538,7 +539,7 @@
                         }
                      }
                   }
-                  console.log(resultArr);
+                  //console.log(resultArr);
                   deferred.resolve(resultArr);
                } else {
                   deferred.resolve([]);
@@ -560,6 +561,10 @@
              var relNext;
              var messages = {items:success.data.result};
 
+             if (success.headers('content-type').indexOf('application/json') !== 0) {
+               deferred.reject({status:400});
+               return;
+             }
              if (success.headers('link')){
                   relNext = success.headers('link').match(regex).filter(function(elem){
                   return (elem.search('rel="next"') != -1);
@@ -588,7 +593,7 @@
              });
              deferred.resolve(messages);
              },function(error){
-               console.log(error);
+               //console.log(error);
                deferred.reject(error);
              });
            return deferred.promise;
@@ -599,7 +604,7 @@
           //  group: modalData.group.value
            var deferred = $q.defer();
            $http.post(urlMessages,message,configHttp).then(function(success){
-             console.log("Feed Message posted");
+             //console.log("Feed Message posted");
              deferred.resolve();
            }, function(error){
              deferred.reject();
@@ -654,6 +659,40 @@
           return deferred.promise;
          }
 
+         function loadHistoricalSurveyStats(){
+           var deferred = $q.defer();
+           var urlStats = urlApi + '/stats/x_70016_app_proc_surveystats?sysparm_max_fields=runat';
+           var urlTable = urlApi + '/table/x_70016_app_proc_surveystats';
+
+           $http.get(urlStats,configHttp).then(function(res){
+             if (!res.data.result.stats) {
+               deferred.reject();
+               return;
+             }
+             urlTable += '?runat='+encodeURIComponent(res.data.result.stats.max.runat);
+             $http.get(urlTable,configHttp).then(function(res){
+               deferred.resolve(res.data.result);
+             });
+
+           },function(error) {
+             deferred.reject(error);});
+
+           return deferred.promise;
+         }
+
+         function getTrendingIcon(direction){
+           // possible directions are up, down and flat
+           var trend = {
+             up:'data:image/svg+xml,<svg fill="#000000" height="36" viewBox="0 0 24 24" width="36" xmlns="http://www.w3.org/2000/svg"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/><path d="M0 0h24v24H0z" fill="none"/></svg>' ,
+             down: 'data:image/svg+xml,<svg fill="#000000" height="36" viewBox="0 0 24 24" width="36" xmlns="http://www.w3.org/2000/svg"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/><path d="M0 0h24v24H0z" fill="none"/></svg>',
+             flat: 'data:image/svg+xml,<svg fill="#000000" height="36" viewBox="0 0 24 24" width="36" xmlns="http://www.w3.org/2000/svg"><path d="M22 12l-4-4v3H3v2h15v3z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'
+           };
+
+           return trend[direction];
+
+
+         }
+
          return {
             hello: function() {
                return "hello";
@@ -671,7 +710,9 @@
             postMessage: postMessage,
             postMessageSurveyDone: postMessageSurveyDone,
             setLogin:setLogin,
-            getLogin:getLogin
+            getLogin:getLogin,
+            loadHistoricalSurveyStats:loadHistoricalSurveyStats,
+            getTrendingIcon:getTrendingIcon
          };
 
 
@@ -683,7 +724,7 @@
         <sys_created_on>2017-02-22 10:12:55</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>713b9ad60f4932005eaa48dce1050e13</sys_id>
-        <sys_mod_count>20</sys_mod_count>
+        <sys_mod_count>21</sys_mod_count>
         <sys_name>x_70016_app_proc.processData</sys_name>
         <sys_package display_value="app_proc" source="x_70016_app_proc">51b76ca30f7032005eaa48dce1050e64</sys_package>
         <sys_policy/>
@@ -691,7 +732,7 @@
         <sys_scope display_value="app_proc">51b76ca30f7032005eaa48dce1050e64</sys_scope>
         <sys_update_name>sys_ui_script_713b9ad60f4932005eaa48dce1050e13</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-03-06 15:46:46</sys_updated_on>
+        <sys_updated_on>2017-03-13 10:00:39</sys_updated_on>
         <use_scoped_format>false</use_scoped_format>
     </sys_ui_script>
 </record_update>
